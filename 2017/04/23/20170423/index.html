@@ -74,7 +74,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="zerorpc," />
 
 
 
@@ -90,15 +90,16 @@
 
 
 
-<meta name="description" content="coding...">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Berserker的个人博客">
-<meta property="og:url" content="zyidev.com/index.html">
+<meta name="description" content="zerorpcIntroduction &amp;amp; Historyzerorpc features a dead-simple API for exposing any object or module over thenetwork, and a powerful gevent implementation which supports multiple ZMQsocket types, str">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Introduce for Implement of ZeroRpc">
+<meta property="og:url" content="zyidev.com/2017/04/23/20170423/index.html">
 <meta property="og:site_name" content="Berserker的个人博客">
-<meta property="og:description" content="coding...">
+<meta property="og:description" content="zerorpcIntroduction &amp;amp; Historyzerorpc features a dead-simple API for exposing any object or module over thenetwork, and a powerful gevent implementation which supports multiple ZMQsocket types, str">
+<meta property="og:updated_time" content="2017-04-23T07:20:52.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Berserker的个人博客">
-<meta name="twitter:description" content="coding...">
+<meta name="twitter:title" content="Introduce for Implement of ZeroRpc">
+<meta name="twitter:description" content="zerorpcIntroduction &amp;amp; Historyzerorpc features a dead-simple API for exposing any object or module over thenetwork, and a powerful gevent implementation which supports multiple ZMQsocket types, str">
 
 
 
@@ -116,7 +117,7 @@
   };
 </script>
 
-  <title> Berserker的个人博客 </title>
+  <title> Introduce for Implement of ZeroRpc | Berserker的个人博客 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -137,9 +138,7 @@
     
   
 
-  <div class="container one-collumn sidebar-position-left 
-   page-home 
- ">
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -256,9 +255,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
   
@@ -278,10 +277,7 @@
             
             
               
-                
-                <a class="post-title-link" href="/2017/04/23/20170423/" itemprop="url">
-                  Introduce for Implement of ZeroRpc
-                </a>
+                Introduce for Implement of ZeroRpc
               
             
           </h1>
@@ -328,9 +324,7 @@
       
 
       
-        
-          
-            <h1 id="zerorpc"><a href="#zerorpc" class="headerlink" title="zerorpc"></a>zerorpc</h1><h2 id="Introduction-amp-History"><a href="#Introduction-amp-History" class="headerlink" title="Introduction &amp; History"></a>Introduction &amp; History</h2><p>zerorpc features a dead-simple API for exposing any object or module over the<br>network, and a powerful gevent implementation which supports multiple ZMQ<br>socket types, streaming, heartbeats and more. It also includes a simple<br>command-line tool for interactive querying and introspection.</p>
+        <h1 id="zerorpc"><a href="#zerorpc" class="headerlink" title="zerorpc"></a>zerorpc</h1><h2 id="Introduction-amp-History"><a href="#Introduction-amp-History" class="headerlink" title="Introduction &amp; History"></a>Introduction &amp; History</h2><p>zerorpc features a dead-simple API for exposing any object or module over the<br>network, and a powerful gevent implementation which supports multiple ZMQ<br>socket types, streaming, heartbeats and more. It also includes a simple<br>command-line tool for interactive querying and introspection.</p>
 <h2 id="Layers"><a href="#Layers" class="headerlink" title="Layers"></a>Layers</h2><p>Before diving into any details, let’s divide zerorpc’s protocol in three<br>different layers:</p>
 <ol>
 <li>Wire (or transport) layer; a combination of ZMQ and msgpack .</li>
@@ -479,160 +473,58 @@
 </ul>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">_process_response</span><span class="params">(self, request_event, bufchan, timeout)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">raise_error</span><span class="params">(ex)</span>:</span></span><br><span class="line">        bufchan.close()</span><br><span class="line">        self._context.hook_client_after_request(request_event, <span class="keyword">None</span>, ex)</span><br><span class="line">        <span class="keyword">raise</span> ex</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        reply_event = bufchan.recv(timeout=timeout)</span><br><span class="line">    <span class="keyword">except</span> TimeoutExpired:</span><br><span class="line">        raise_error(TimeoutExpired(timeout,</span><br><span class="line">                <span class="string">'calling remote method &#123;0&#125;'</span>.format(request_event.name)))</span><br><span class="line"></span><br><span class="line">    pattern = self._select_pattern(reply_event)</span><br><span class="line">    <span class="keyword">if</span> pattern <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">        raise_error(RuntimeError(</span><br><span class="line">            <span class="string">'Unable to find a pattern for: &#123;0&#125;'</span>.format(request_event)))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> pattern.process_answer(self._context, bufchan, request_event,</span><br><span class="line">            reply_event, self._handle_remote_error)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">process_answer</span><span class="params">(self, context, channel, req_event, rep_event,</span><br><span class="line">        handle_remote_error)</span>:</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">if</span> rep_event.name == <span class="string">u'ERR'</span>:</span><br><span class="line">            exception = handle_remote_error(rep_event)</span><br><span class="line">            context.hook_client_after_request(req_event, rep_event, exception)</span><br><span class="line">            <span class="keyword">raise</span> exception</span><br><span class="line">        context.hook_client_after_request(req_event, rep_event)</span><br><span class="line">        <span class="keyword">return</span> rep_event.args[<span class="number">0</span>]</span><br><span class="line">    <span class="keyword">finally</span>:</span><br><span class="line">        channel.close()</span><br></pre></td></tr></table></figure>
 
-          
+      
+    </div>
+
+    <div>
+      
         
       
     </div>
 
     <div>
       
-    </div>
+        
 
-    <div>
       
     </div>
 
     <footer class="post-footer">
       
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/05/30/20160530/" itemprop="url">
-                  iOS中GCD多线程的使用
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-05-30T11:14:55+08:00" content="2016-05-30">
-              2016-05-30
-            </time>
-          </span>
-
+        <div class="post-tags">
           
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/05/30/20160530/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/05/30/20160530/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-
+            <a href="/tags/zerorpc/" rel="tag">#zerorpc</a>
           
         </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
       
 
       
-        
-          
-            <p>　ios有三种多线程编程技术，分别是NSThread,Cocoa NSOperation和GCD,GCD全称Grand Central Dispatch 是Apple开发的一个多核编程的解决方法，在iOS4.0开始之后才能使用。GCD是一个可以替代NSThread, NSOperationQueue, NSInvocationOperation等技术的很高效和强大的技术，而且其使用起来比前两者更加的简单方便，今天主要给大家介绍一下有关GCD的使用。<br>　　GCD的工作原理是：让程序平行排队的特定任务，根据可用的处理资源，安排他们在任何可用的处理器核心上执行任务。一个任务可以是一个函数或者是一个语句块（block）,GCD的依然是用线程实现，不过这样可以让普通开发者不用去关注其实现的细节,GCD中的队列称为dispatch queue。<br>Dispatch Queue分为三种：</p>
-<blockquote>
-<ol>
-<li>Serial Dispatch Queue: 线性执行的线程队列，遵循FIFO(First In First Out)原则;</li>
-<li>Concurrent Dispatch Queue: 并发执行的线程队列，并发执行的处理数取决于当前状态;</li>
-<li>Main Dispatch Queue:在应用程序主线程上执行任务。 </li>
-</ol>
-</blockquote>
-<hr>
-<h2 id="dispatch-async"><a href="#dispatch-async" class="headerlink" title="dispatch_async"></a>dispatch_async</h2><p> 有的时候避免界面在处理耗时的操作时卡死，比如发起网络请求，下载数据，缓存图片等，我们需要在另外<br> 一个线程中处理这些操作，在这些操作完成后再通知主线程更新界面，看下面一段代码:<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">dispatch_async</span>(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, <span class="number">0</span>), ^&#123;</span><br><span class="line">        <span class="comment">//耗时操作</span></span><br><span class="line">        <span class="built_in">NSDate</span>* date = [<span class="built_in">NSDate</span> date];</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"------%@"</span>,date);</span><br><span class="line">        </span><br><span class="line">        <span class="built_in">NSURL</span> * url = [<span class="built_in">NSURL</span> URLWithString:<span class="string">@"http://d.hiphotos.baidu.com/image/pic/item/0823dd54564e9258ca2f34e79e82d158ccbf4e9b.jpg"</span>];</span><br><span class="line">        <span class="built_in">NSData</span> * data = [[<span class="built_in">NSData</span> alloc]initWithContentsOfURL:url];</span><br><span class="line">        <span class="built_in">UIImage</span> *image = [[<span class="built_in">UIImage</span> alloc]initWithData:data];</span><br><span class="line">        [<span class="built_in">NSThread</span> sleepForTimeInterval:<span class="number">4</span>];<span class="comment">//为了体现多线程的特点 在这里设置一个延时</span></span><br><span class="line">        <span class="keyword">if</span> (data != <span class="literal">nil</span>) &#123;</span><br><span class="line">            <span class="built_in">dispatch_async</span>(dispatch_get_main_queue(), ^&#123;</span><br><span class="line">                <span class="comment">//结果处理</span></span><br><span class="line">                <span class="built_in">UIImageView</span>* imageview = [[<span class="built_in">UIImageView</span> alloc]initWithImage:image];</span><br><span class="line">                imageview<span class="variable">.frame</span> = [<span class="built_in">UIScreen</span> mainScreen]<span class="variable">.bounds</span>;</span><br><span class="line">                [<span class="keyword">self</span><span class="variable">.view</span> addSubview:imageview];</span><br><span class="line">                <span class="built_in">NSDate</span>* date = [<span class="built_in">NSDate</span> date];</span><br><span class="line">                <span class="built_in">NSLog</span>(<span class="string">@"------%@"</span>,date);</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">	&#125;);</span><br></pre></td></tr></table></figure></p>
-<p> 我们在一个线程里完成下载图片的动作（为了体现多线程的作用，我们在这里设置一个延时）然后在另一个线程里把图片显示出来。<br> 系统给每个应用都提供的有队列，所以一般不用我们手动的去创建，我们只需要通过函数去获取队列就可以了<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">// 获取Main Dispatch Queue</span></span><br><span class="line"><span class="keyword">dispatch_queue_t</span> mainDispatchQueue = dispatch_get_main_queue();</span><br><span class="line"><span class="comment">// 获取Global Dispatch Queue</span></span><br><span class="line"><span class="keyword">dispatch_queue_t</span> globalDispatchQueueDefault = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, <span class="number">0</span>);</span><br></pre></td></tr></table></figure></p>
-<hr>
-<h2 id="dispatch-group-async"><a href="#dispatch-group-async" class="headerlink" title="dispatch_group_async"></a>dispatch_group_async</h2><p>dispatch_group_async可以实现一组任务的监听，在一系列任务完成后再进行其他的操作。看一段例子：<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">dispatch_queue_t</span> queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, <span class="number">0</span>);</span><br><span class="line">dispatch_group_t group = dispatch_group_create();</span><br><span class="line">dispatch_group_async(group, queue, ^&#123;</span><br><span class="line">    [<span class="built_in">NSThread</span> sleepForTimeInterval:<span class="number">1</span>];</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"线程1"</span>);</span><br><span class="line">&#125;);</span><br><span class="line">dispatch_group_async(group, queue, ^&#123;</span><br><span class="line">    [<span class="built_in">NSThread</span> sleepForTimeInterval:<span class="number">5</span>];</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"线程2"</span>);</span><br><span class="line">&#125;);</span><br><span class="line">dispatch_group_async(group, queue, ^&#123;</span><br><span class="line">    [<span class="built_in">NSThread</span> sleepForTimeInterval:<span class="number">3</span>];</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"线程3"</span>);</span><br><span class="line">&#125;);</span><br><span class="line">　　<span class="comment">//dispatch_group_notify函数用来指定一个额外的block，该block将在group中所有任务完成后执行</span></span><br><span class="line">dispatch_group_notify(group, dispatch_get_main_queue(), ^&#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"更新操作"</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
-<p>执行结果为：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">线程<span class="number">1</span></span><br><span class="line">线程<span class="number">3</span></span><br><span class="line">线程<span class="number">2</span></span><br><span class="line">更新操作</span><br></pre></td></tr></table></figure></p>
-<p>由结果可以看出，3个线程都执行完成后，更新操作才执行</p>
-<hr>
-<h2 id="dispatch-barrier-async"><a href="#dispatch-barrier-async" class="headerlink" title="dispatch_barrier_async"></a>dispatch_barrier_async</h2><p><em>dispatch_barrier_async</em>是在前面的任务执行结束后才执行，而且它后面的任务等它执行完成之后才会执行<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">dispatch_queue_t</span> queue = dispatch_queue_create(<span class="string">"gcdtest2"</span>, DISPATCH_QUEUE_CONCURRENT);</span><br><span class="line">    <span class="built_in">dispatch_async</span>(queue, ^&#123;</span><br><span class="line">        [<span class="built_in">NSThread</span> sleepForTimeInterval:<span class="number">1</span>];</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"线程1"</span>);</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="built_in">dispatch_async</span>(queue, ^&#123;</span><br><span class="line">        [<span class="built_in">NSThread</span> sleepForTimeInterval:<span class="number">5</span>];</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"线程2"</span>);</span><br><span class="line">    &#125;);</span><br><span class="line">    dispatch_barrier_async(queue, ^&#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"barrier执行"</span>);</span><br><span class="line">        [<span class="built_in">NSThread</span> sleepForTimeInterval:<span class="number">5</span>];</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="built_in">dispatch_async</span>(queue, ^&#123;</span><br><span class="line">        [<span class="built_in">NSThread</span> sleepForTimeInterval:<span class="number">1</span>];</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"线程4"</span>);</span><br><span class="line">    &#125;);</span><br></pre></td></tr></table></figure></p>
-<p>执行结果为：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">线程<span class="number">1</span></span><br><span class="line">线程<span class="number">2</span></span><br><span class="line">barrier执行</span><br><span class="line">线程<span class="number">4</span></span><br></pre></td></tr></table></figure></p>
-<hr>
-<h2 id="关于线程死锁"><a href="#关于线程死锁" class="headerlink" title="关于线程死锁"></a>关于线程死锁</h2><p>想想下面一段代码如果在主线程中执行会发生什么：<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">dispatch_sync</span>(dispatch_get_main_queue(), ^&#123;</span><br><span class="line">   DLog(<span class="string">@"????????"</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
-<p>在解决这个问题前 我们需要先了解同步（synchronization）\ 异步（asynchronization），串行（serial）\ 并行（concurrency）的区别。</p>
-<p>同步和异步是针对当前当前线程和加入队列中的任务之间执行顺序的关系而言的。以同步的方式向队列中添加任务，会阻塞当前线程，直到同步到队列中的任务执行完毕返回后，才会接着执行当前的线程中的其他任务；以异步的方式向队列中添加的任务则不会阻塞当前线程，将任务添加到队列中后，不用等待前面添加的任务执行完毕。</p>
-<p>串行和并行是针对一个队列中的多个任务执行顺序而言的。串行队列是指队列中的任务是一个接一个地执行的，队首的任务执行完毕后才能执行其后面的任务，直至执行队尾的任务；并行队列是指队列中的任务可以并发地执行，即开始执行队首的任务后，不必等其执行完毕就可以接着开始执行队首之后的任务，因此在某一时刻可能存在同时执行的多个任务。</p>
-<p>所以上面的问题就很明显了，线程会被阻塞造成死锁。因为主线程是串行队列，里面的任务需要顺序执行，而在主线程中调用主线程执行任务x，任务x需要等待主线程任务执行完成，而x又持有主线程导致主线程的任务无法完成，所以就造成了死锁，Apple在iOS7以后废弃了<em>dispatch_get_current_queue</em>方法 应该也是出于这个考虑。</p>
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/05/30/20160530/" rel="next" title="iOS中GCD多线程的使用">
+                <i class="fa fa-chevron-left"></i> iOS中GCD多线程的使用
+              </a>
+            
+          </div>
 
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
       
 
       
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </article>
 
 
-    
-  </section>
 
-  
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -640,6 +532,14 @@
 
 
           
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2017/04/23/20170423/"
+           data-title="Introduce for Implement of ZeroRpc" data-url="zyidev.com/2017/04/23/20170423/">
+      </div>
+    
+  </div>
+
 
         </div>
         
@@ -659,8 +559,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel  sidebar-panel-active ">
+      <section class="site-overview sidebar-panel ">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="http://tp4.sinaimg.cn/2943202687/180/5643163588/1"
@@ -732,6 +641,17 @@
 
       </section>
 
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#zerorpc"><span class="nav-number">1.</span> <span class="nav-text">zerorpc</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction-amp-History"><span class="nav-number">1.1.</span> <span class="nav-text">Introduction & History</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Layers"><span class="nav-number">1.2.</span> <span class="nav-text">Layers</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Wire-layer"><span class="nav-number">1.3.</span> <span class="nav-text">Wire layer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Event-layer"><span class="nav-number">1.4.</span> <span class="nav-text">Event layer</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Basic-Events"><span class="nav-number">1.4.1.</span> <span class="nav-text">Basic Events</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Multiplexed-Channels"><span class="nav-number">1.4.2.</span> <span class="nav-text">Multiplexed Channels</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Heartbeat"><span class="nav-number">1.4.2.1.</span> <span class="nav-text">Heartbeat</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Buffering-or-congestion-control-on-channels"><span class="nav-number">1.4.2.2.</span> <span class="nav-text">Buffering (or congestion control) on channels</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RPC-Layer"><span class="nav-number">1.5.</span> <span class="nav-text">RPC Layer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Realize"><span class="nav-number">1.6.</span> <span class="nav-text">Realize</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Concept"><span class="nav-number">1.7.</span> <span class="nav-text">Concept</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Server"><span class="nav-number">1.7.1.</span> <span class="nav-text">Server</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Client"><span class="nav-number">1.7.2.</span> <span class="nav-text">Client</span></a></li></ol></li></ol></li></ol></div>
+            
+          </div>
+        </section>
       
 
     </div>
@@ -835,6 +755,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
 
   
 
