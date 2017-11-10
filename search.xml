@@ -5,7 +5,7 @@
     
     <entry>
       <title><![CDATA[分布式 Redis 解决方案Codis介绍]]></title>
-      <url>zyidev.com/2018/01/04/20171110/</url>
+      <url>zyidev.com/2017/11/10/20171110/</url>
       <content type="html"><![CDATA[<h1 id="分布式-Redis-解决方案Codis介绍"><a href="#分布式-Redis-解决方案Codis介绍" class="headerlink" title="分布式 Redis 解决方案Codis介绍"></a>分布式 Redis 解决方案Codis介绍</h1><p>Codis 是一个分布式 Redis 解决方案, 对于上层的应用来说, 连接到 Codis Proxy 和连接原生的 Redis Server 没有显著区别 , 上层应用可以像使用单机的 Redis 一样使用, Codis 底层会处理请求的转发, 不停机的数据迁移等工作, 所有后边的一切事情, 对于前面的客户端来说是透明的, 可以简单的认为后边连接的是一个内存无限大的 Redis 服务。</p>
 <h1 id="Architecture"><a href="#Architecture" class="headerlink" title="Architecture"></a>Architecture</h1><p><img src="https://raw.githubusercontent.com/CodisLabs/codis/release3.2/doc/pictures/architecture.png" alt="image"></p>
 <h1 id="Codis-组件"><a href="#Codis-组件" class="headerlink" title="Codis 组件"></a>Codis 组件</h1><ul>
