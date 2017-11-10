@@ -74,7 +74,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Redis,Codis," />
+  <meta name="keywords" content="Codis," />
 
 
 
@@ -93,11 +93,11 @@
 <meta name="description" content="分布式 Redis 解决方案Codis介绍Codis 是一个分布式 Redis 解决方案, 对于上层的应用来说, 连接到 Codis Proxy 和连接原生的 Redis Server 没有显著区别 , 上层应用可以像使用单机的 Redis 一样使用, Codis 底层会处理请求的转发, 不停机的数据迁移等工作, 所有后边的一切事情, 对于前面的客户端来说是透明的, 可以简单的认为后边连接的是一个">
 <meta property="og:type" content="article">
 <meta property="og:title" content="分布式 Redis 解决方案Codis介绍">
-<meta property="og:url" content="zyidev.com/2017/04/23/20171110/index.html">
+<meta property="og:url" content="zyidev.com/2018/01/04/20171110/index.html">
 <meta property="og:site_name" content="zyi的个人博客">
 <meta property="og:description" content="分布式 Redis 解决方案Codis介绍Codis 是一个分布式 Redis 解决方案, 对于上层的应用来说, 连接到 Codis Proxy 和连接原生的 Redis Server 没有显著区别 , 上层应用可以像使用单机的 Redis 一样使用, Codis 底层会处理请求的转发, 不停机的数据迁移等工作, 所有后边的一切事情, 对于前面的客户端来说是透明的, 可以简单的认为后边连接的是一个">
 <meta property="og:image" content="https://raw.githubusercontent.com/CodisLabs/codis/release3.2/doc/pictures/architecture.png">
-<meta property="og:updated_time" content="2017-11-10T04:07:26.000Z">
+<meta property="og:updated_time" content="2017-11-10T04:36:30.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="分布式 Redis 解决方案Codis介绍">
 <meta name="twitter:description" content="分布式 Redis 解决方案Codis介绍Codis 是一个分布式 Redis 解决方案, 对于上层的应用来说, 连接到 Codis Proxy 和连接原生的 Redis Server 没有显著区别 , 上层应用可以像使用单机的 Redis 一样使用, Codis 底层会处理请求的转发, 不停机的数据迁移等工作, 所有后边的一切事情, 对于前面的客户端来说是透明的, 可以简单的认为后边连接的是一个">
@@ -290,8 +290,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-04-23T15:20:55+08:00" content="2017-04-23">
-              2017-04-23
+            <time itemprop="dateCreated" datetime="2018-01-04T12:35:55+08:00" content="2018-01-04">
+              2018-01-04
             </time>
           </span>
 
@@ -301,8 +301,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2017/04/23/20171110/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/04/23/20171110/" itemprop="commentsCount"></span>
+                <a href="/2018/01/04/20171110/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/01/04/20171110/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -528,7 +528,7 @@
 <p>配置的管理在分布式应用环境中很常见，例如同一个应用系统需要多台 PC Server 运行，但是它们运行的应用系统的某些配置项是相同的，如果要修改这些相同的配置项，那么就必须同时修改每台运行这个应用系统的 PC Server，这样非常麻烦而且容易出错。<br>像这样的配置信息完全可以交给 Zookeeper 来管理，将配置信息保存在 Zookeeper 的某个目录节点中，然后将所有需要修改的应用机器监控配置信息的状态，一旦配置信息发生变化，每台应用机器就会收到 Zookeeper 的通知，然后从 Zookeeper 获取新的配置信息应用到系统中。</p>
 </blockquote>
 <p>Codis的特点是动态的扩容缩容，对业务透明；zk除了存储路由信息，同时还作为一个事件同步的媒介服务，比如变更master或者数据迁移这样的事情，需要所有的proxy通过监听特定zk事件来实现 可以说zk被codis当做了一个可靠的rpc的信道来使用。因为只有集群变更的admin时候会往zk上发事件，proxy监听到以后，回复在zk上，admin收到各个proxy的回复后才继续。本身集群变更的事情不会经常发生，所以数据量不大。</p>
-<h2 id="Codis-扩容"><a href="#Codis-扩容" class="headerlink" title="Codis 扩容"></a>Codis 扩容</h2><h3 id="通过fe添加group"><a href="#通过fe添加group" class="headerlink" title="通过fe添加group"></a>通过fe添加group</h3><p>通过web浏览器访问集群管理页面(fe地址:<a href="http://test.max.gg:8889/" target="_blank" rel="external">http://test.max.gg:8889/</a>) 选择我们刚搭建的集群 codis-demo，在 Proxy 栏可看到我们已经启动的 Proxy， 添加 NEW GROUP，NEW GROUP 行输入 x，再点击 NEW GROUP 即可 添加 Codis Server，Add Server 行输入我们刚刚启动的 codis-server 地址，添加到我们刚新建的 Group，然后再点击 Add Server 按钮即可</p>
+<h2 id="Codis-扩容"><a href="#Codis-扩容" class="headerlink" title="Codis 扩容"></a>Codis 扩容</h2><h3 id="通过fe添加group"><a href="#通过fe添加group" class="headerlink" title="通过fe添加group"></a>通过fe添加group</h3><p>通过web浏览器访问集群管理页面 选择我们刚搭建的集群 codis-demo，在 Proxy 栏可看到我们已经启动的 Proxy， 添加 NEW GROUP，NEW GROUP 行输入 x，再点击 NEW GROUP 即可 添加 Codis Server，Add Server 行输入我们刚刚启动的 codis-server 地址，添加到我们刚新建的 Group，然后再点击 Add Server 按钮即可</p>
 <h3 id="通过fe初始化slot"><a href="#通过fe初始化slot" class="headerlink" title="通过fe初始化slot"></a>通过fe初始化slot</h3><p>新增的集群 slot 状态是 offline，因此我们需要对它进行初始化（将 1024 个 slot 分配到各个 group），而初始化最快的方法可通过 fe 提供的 rebalance all slots 按钮来做，新增GROUP时需要同样的操作，即可将数据平均的分配到各个GROUP。</p>
 <h2 id="Codis-容错，负载均衡，一致性"><a href="#Codis-容错，负载均衡，一致性" class="headerlink" title="Codis 容错，负载均衡，一致性"></a>Codis 容错，负载均衡，一致性</h2><p>因为 codis-proxy 是无状态的，可以比较容易的搭多个实例，利用HAProxy或结合keepalived达到高可用性和横向扩展。实现负载均衡。</p>
 <p>对下层的 redis 实例来说，当一个 group 的 master 挂掉的时候，应该让管理员清楚，并手动的操作，因为这涉及到了数据一致性等问题（redis的主从同步是最终一致性的）。因此 codis 不会自动的将某个 slave 升级成 master。</p>
@@ -555,7 +555,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Redis-Codis/" rel="tag">#Redis,Codis</a>
+            <a href="/tags/Codis/" rel="tag">#Codis</a>
           
         </div>
       
@@ -596,8 +596,8 @@
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2017/04/23/20171110/"
-           data-title="分布式 Redis 解决方案Codis介绍" data-url="zyidev.com/2017/04/23/20171110/">
+      <div class="ds-thread" data-thread-key="2018/01/04/20171110/"
+           data-title="分布式 Redis 解决方案Codis介绍" data-url="zyidev.com/2018/01/04/20171110/">
       </div>
     
   </div>
