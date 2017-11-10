@@ -5,7 +5,7 @@
     
     <entry>
       <title><![CDATA[分布式 Redis 解决方案Codis介绍]]></title>
-      <url>zyidev.com/2017/11/10/20171110/</url>
+      <url>zyidev.cn/2017/11/10/20171110/</url>
       <content type="html"><![CDATA[<h1 id="分布式-Redis-解决方案Codis介绍"><a href="#分布式-Redis-解决方案Codis介绍" class="headerlink" title="分布式 Redis 解决方案Codis介绍"></a>分布式 Redis 解决方案Codis介绍</h1><p>Codis 是一个分布式 Redis 解决方案, 对于上层的应用来说, 连接到 Codis Proxy 和连接原生的 Redis Server 没有显著区别 , 上层应用可以像使用单机的 Redis 一样使用, Codis 底层会处理请求的转发, 不停机的数据迁移等工作, 所有后边的一切事情, 对于前面的客户端来说是透明的, 可以简单的认为后边连接的是一个内存无限大的 Redis 服务。</p>
 <h1 id="Architecture"><a href="#Architecture" class="headerlink" title="Architecture"></a>Architecture</h1><p><img src="https://raw.githubusercontent.com/CodisLabs/codis/release3.2/doc/pictures/architecture.png" alt="image"></p>
 <h1 id="Codis-组件"><a href="#Codis-组件" class="headerlink" title="Codis 组件"></a>Codis 组件</h1><ul>
@@ -220,7 +220,7 @@
     
     <entry>
       <title><![CDATA[Introduce for Implement of ZeroRpc]]></title>
-      <url>zyidev.com/2017/04/23/20170423/</url>
+      <url>zyidev.cn/2017/04/23/20170423/</url>
       <content type="html"><![CDATA[<h1 id="zerorpc"><a href="#zerorpc" class="headerlink" title="zerorpc"></a>zerorpc</h1><h2 id="Introduction-amp-History"><a href="#Introduction-amp-History" class="headerlink" title="Introduction &amp; History"></a>Introduction &amp; History</h2><p>zerorpc features a dead-simple API for exposing any object or module over the<br>network, and a powerful gevent implementation which supports multiple ZMQ<br>socket types, streaming, heartbeats and more. It also includes a simple<br>command-line tool for interactive querying and introspection.</p>
 <h2 id="Layers"><a href="#Layers" class="headerlink" title="Layers"></a>Layers</h2><p>Before diving into any details, let’s divide zerorpc’s protocol in three<br>different layers:</p>
 <ol>
@@ -374,7 +374,7 @@
     
     <entry>
       <title><![CDATA[iOS中GCD多线程的使用]]></title>
-      <url>zyidev.com/2016/05/30/20160530/</url>
+      <url>zyidev.cn/2016/05/30/20160530/</url>
       <content type="html"><![CDATA[<p>　ios有三种多线程编程技术，分别是NSThread,Cocoa NSOperation和GCD,GCD全称Grand Central Dispatch 是Apple开发的一个多核编程的解决方法，在iOS4.0开始之后才能使用。GCD是一个可以替代NSThread, NSOperationQueue, NSInvocationOperation等技术的很高效和强大的技术，而且其使用起来比前两者更加的简单方便，今天主要给大家介绍一下有关GCD的使用。<br>　　GCD的工作原理是：让程序平行排队的特定任务，根据可用的处理资源，安排他们在任何可用的处理器核心上执行任务。一个任务可以是一个函数或者是一个语句块（block）,GCD的依然是用线程实现，不过这样可以让普通开发者不用去关注其实现的细节,GCD中的队列称为dispatch queue。<br>Dispatch Queue分为三种：</p>
 <blockquote>
 <ol>

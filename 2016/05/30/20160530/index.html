@@ -82,7 +82,7 @@
 <meta name="description" content="ios有三种多线程编程技术，分别是NSThread,Cocoa NSOperation和GCD,GCD全称Grand Central Dispatch 是Apple开发的一个多核编程的解决方法，在iOS4.0开始之后才能使用。GCD是一个可以替代NSThread, NSOperationQueue, NSInvocationOperation等技术的很高效和强大的技术，而且其使用起来比前两者更加的">
 <meta property="og:type" content="article">
 <meta property="og:title" content="iOS中GCD多线程的使用">
-<meta property="og:url" content="zyidev.com/2016/05/30/20160530/index.html">
+<meta property="og:url" content="zyidev.cn/2016/05/30/20160530/index.html">
 <meta property="og:site_name" content="zyi的个人博客">
 <meta property="og:description" content="ios有三种多线程编程技术，分别是NSThread,Cocoa NSOperation和GCD,GCD全称Grand Central Dispatch 是Apple开发的一个多核编程的解决方法，在iOS4.0开始之后才能使用。GCD是一个可以替代NSThread, NSOperationQueue, NSInvocationOperation等技术的很高效和强大的技术，而且其使用起来比前两者更加的">
 <meta property="og:updated_time" content="2016-05-30T03:43:01.000Z">
@@ -118,7 +118,7 @@
 
 
 
-  <link rel="canonical" href="zyidev.com/2016/05/30/20160530/"/>
+  <link rel="canonical" href="zyidev.cn/2016/05/30/20160530/"/>
 
 
 
@@ -261,7 +261,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="zyidev.com/2016/05/30/20160530/">
+    <link itemprop="mainEntityOfPage" href="zyidev.cn/2016/05/30/20160530/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Berserker">
@@ -303,16 +303,6 @@
           
 
           
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2016/05/30/20160530/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/05/30/20160530/" itemprop="commentCount"></span>
-                </a>
-              </span>
             
           
 
@@ -431,9 +421,9 @@
 
   
     <div class="comments" id="comments">
-      <div class="ds-thread" data-thread-key="2016/05/30/20160530/"
-           data-title="iOS中GCD多线程的使用" data-url="zyidev.com/2016/05/30/20160530/">
-      </div>
+      
+        <div id="gitment-container"></div>
+      
     </div>
 
   
@@ -689,35 +679,65 @@
 
   
 
+
   
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+<!-- LOCAL: You can save these files to your site and update links -->
     
-  
+        
+        <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+        <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+    
+<!-- END LOCAL -->
 
-  <script type="text/javascript">
-    var duoshuoQuery = {short_name:"zyidev"};
-    (function() {
-      var ds = document.createElement('script');
-      ds.type = 'text/javascript';ds.async = true;
-      ds.id = 'duoshuo-script';
-      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-      ds.charset = 'UTF-8';
-      (document.getElementsByTagName('head')[0]
-      || document.getElementsByTagName('body')[0]).appendChild(ds);
-    })();
-  </script>
+    
 
-  
+    
+      <script type="text/javascript">
+      function renderGitment(){
+        var gitment = new Gitment({
+            id: window.location.pathname, 
+            owner: '12459874',
+            repo: 'zyi1992.github.io',
+            
+            oauth: {
+            
+            
+                client_secret: 'e1d8b18138c8c2cb18d20477e980a03efe9bec5c',
+            
+                client_id: '0932a68284a9476f57a6'
+            }});
+        gitment.render('gitment-container');
+      }
 
-
-
-
-
-
-
-
-
-
-
+      
+      renderGitment();
+      
+      </script>
+    
 
 
 

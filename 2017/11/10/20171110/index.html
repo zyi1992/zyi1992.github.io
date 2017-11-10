@@ -82,7 +82,7 @@
 <meta name="description" content="分布式 Redis 解决方案Codis介绍Codis 是一个分布式 Redis 解决方案, 对于上层的应用来说, 连接到 Codis Proxy 和连接原生的 Redis Server 没有显著区别 , 上层应用可以像使用单机的 Redis 一样使用, Codis 底层会处理请求的转发, 不停机的数据迁移等工作, 所有后边的一切事情, 对于前面的客户端来说是透明的, 可以简单的认为后边连接的是一个">
 <meta property="og:type" content="article">
 <meta property="og:title" content="分布式 Redis 解决方案Codis介绍">
-<meta property="og:url" content="zyidev.com/2017/11/10/20171110/index.html">
+<meta property="og:url" content="zyidev.cn/2017/11/10/20171110/index.html">
 <meta property="og:site_name" content="zyi的个人博客">
 <meta property="og:description" content="分布式 Redis 解决方案Codis介绍Codis 是一个分布式 Redis 解决方案, 对于上层的应用来说, 连接到 Codis Proxy 和连接原生的 Redis Server 没有显著区别 , 上层应用可以像使用单机的 Redis 一样使用, Codis 底层会处理请求的转发, 不停机的数据迁移等工作, 所有后边的一切事情, 对于前面的客户端来说是透明的, 可以简单的认为后边连接的是一个">
 <meta property="og:image" content="https://raw.githubusercontent.com/CodisLabs/codis/release3.2/doc/pictures/architecture.png">
@@ -119,7 +119,7 @@
 
 
 
-  <link rel="canonical" href="zyidev.com/2017/11/10/20171110/"/>
+  <link rel="canonical" href="zyidev.cn/2017/11/10/20171110/"/>
 
 
 
@@ -262,7 +262,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="zyidev.com/2017/11/10/20171110/">
+    <link itemprop="mainEntityOfPage" href="zyidev.cn/2017/11/10/20171110/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Berserker">
@@ -304,16 +304,6 @@
           
 
           
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2017/11/10/20171110/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/11/10/20171110/" itemprop="commentCount"></span>
-                </a>
-              </span>
             
           
 
@@ -617,9 +607,9 @@
 
   
     <div class="comments" id="comments">
-      <div class="ds-thread" data-thread-key="2017/11/10/20171110/"
-           data-title="分布式 Redis 解决方案Codis介绍" data-url="zyidev.com/2017/11/10/20171110/">
-      </div>
+      
+        <div id="gitment-container"></div>
+      
     </div>
 
   
@@ -875,35 +865,65 @@
 
   
 
+
   
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+<!-- LOCAL: You can save these files to your site and update links -->
     
-  
+        
+        <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+        <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+    
+<!-- END LOCAL -->
 
-  <script type="text/javascript">
-    var duoshuoQuery = {short_name:"zyidev"};
-    (function() {
-      var ds = document.createElement('script');
-      ds.type = 'text/javascript';ds.async = true;
-      ds.id = 'duoshuo-script';
-      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-      ds.charset = 'UTF-8';
-      (document.getElementsByTagName('head')[0]
-      || document.getElementsByTagName('body')[0]).appendChild(ds);
-    })();
-  </script>
+    
 
-  
+    
+      <script type="text/javascript">
+      function renderGitment(){
+        var gitment = new Gitment({
+            id: window.location.pathname, 
+            owner: '12459874',
+            repo: 'zyi1992.github.io',
+            
+            oauth: {
+            
+            
+                client_secret: 'e1d8b18138c8c2cb18d20477e980a03efe9bec5c',
+            
+                client_id: '0932a68284a9476f57a6'
+            }});
+        gitment.render('gitment-container');
+      }
 
-
-
-
-
-
-
-
-
-
-
+      
+      renderGitment();
+      
+      </script>
+    
 
 
 
