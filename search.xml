@@ -4,6 +4,221 @@
   
     
     <entry>
+      <title><![CDATA[分布式 Redis 解决方案Codis介绍]]></title>
+      <url>zyidev.com/2017/04/23/20171110/</url>
+      <content type="html"><![CDATA[<h1 id="分布式-Redis-解决方案Codis介绍"><a href="#分布式-Redis-解决方案Codis介绍" class="headerlink" title="分布式 Redis 解决方案Codis介绍"></a>分布式 Redis 解决方案Codis介绍</h1><p>Codis 是一个分布式 Redis 解决方案, 对于上层的应用来说, 连接到 Codis Proxy 和连接原生的 Redis Server 没有显著区别 , 上层应用可以像使用单机的 Redis 一样使用, Codis 底层会处理请求的转发, 不停机的数据迁移等工作, 所有后边的一切事情, 对于前面的客户端来说是透明的, 可以简单的认为后边连接的是一个内存无限大的 Redis 服务。</p>
+<h1 id="Architecture"><a href="#Architecture" class="headerlink" title="Architecture"></a>Architecture</h1><p><img src="https://raw.githubusercontent.com/CodisLabs/codis/release3.2/doc/pictures/architecture.png" alt="image"></p>
+<h1 id="Codis-组件"><a href="#Codis-组件" class="headerlink" title="Codis 组件"></a>Codis 组件</h1><ul>
+<li><p><strong>Codis Server</strong>：基于 redis-3.2.8 分支开发。增加了额外的数据结构，以支持 slot 有关的操作以及<a href="https://github.com/CodisLabs/codis/blob/release3.2/doc/redis_change_zh.md" target="_blank" rel="external">数据迁移指令</a>。</p>
+</li>
+<li><p><strong>Codis Proxy</strong>：客户端连接的 Redis 代理服务, 实现了 Redis 协议。 除<a href="https://github.com/CodisLabs/codis/blob/release3.2/doc/unsupported_cmds.md" target="_blank" rel="external">部分命令不支持以外</a>，表现的和原生的 Redis 没有区别。</p>
+<ul>
+<li>对于同一个业务集群而言，可以同时部署多个 codis-proxy 实例；</li>
+<li>不同 codis-proxy 之间由 codis-dashboard 保证状态同步。</li>
+</ul>
+</li>
+<li><p><strong>Codis Dashboard</strong>：集群管理工具，支持 codis-proxy、codis-server 的添加、删除，以及据迁移等操作。在集群状态发生改变时，codis-dashboard 维护集群下所有 codis-proxy 的状态的一致性。</p>
+<ul>
+<li>对于同一个业务集群而言，同一个时刻 codis-dashboard 只能有 0个或者1个；</li>
+<li>所有对集群的修改都必须通过 codis-dashboard 完成。</li>
+</ul>
+</li>
+<li><p><strong>Codis Admin</strong>：集群管理的命令行工具。</p>
+<ul>
+<li>可用于控制 codis-proxy、codis-dashboard 状态以及访问外部存储。</li>
+</ul>
+</li>
+<li><p><strong>Codis FE</strong>：集群管理界面。</p>
+<ul>
+<li>多个集群实例共享可以共享同一个前端展示页面；</li>
+<li>通过配置文件管理后端 codis-dashboard 列表，配置文件可自动更新。</li>
+</ul>
+</li>
+<li><p><strong>Storage</strong>：为集群状态提供外部存储。</p>
+<ul>
+<li>提供 Namespace 概念，不同集群的会按照不同 product name 进行组织；</li>
+<li>目前仅提供了 Zookeeper、Etcd、Fs 三种实现，但是提供了抽象的 interface 可自行扩展。</li>
+</ul>
+</li>
+</ul>
+<h2 id="集群搭建"><a href="#集群搭建" class="headerlink" title="集群搭建"></a>集群搭建</h2><h3 id="编译源码安装"><a href="#编译源码安装" class="headerlink" title="编译源码安装"></a>编译源码安装</h3><h4 id="1-安装-Go-运行环境-参考"><a href="#1-安装-Go-运行环境-参考" class="headerlink" title="1. 安装 Go 运行环境 参考"></a>1. 安装 Go 运行环境 <a href="https://golang.org/doc/install" target="_blank" rel="external">参考</a></h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$vim</span> /etc/profile</span><br><span class="line"><span class="comment">#add</span></span><br><span class="line"><span class="built_in">export</span> GOROOT=/usr/<span class="built_in">local</span>/go</span><br><span class="line"><span class="built_in">export</span> GOPATH=<span class="variable">$HOME</span>/go</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$GOROOT</span>/bin:<span class="variable">$PATH</span></span><br></pre></td></tr></table></figure>
+<p>安装完成后可以运行下列命令进行检测：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ go version</span><br><span class="line">go version go1.<span class="number">7.3</span> linux/amd64</span><br></pre></td></tr></table></figure>
+<h4 id="2-设置编译环境"><a href="#2-设置编译环境" class="headerlink" title="2. 设置编译环境"></a>2. 设置编译环境</h4><p><strong>注意 <code>$GOPATH</code> 是本机所有第三方库 go 项目所在目录，Codis 仅是其中之一。</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ go env GOPATH</span><br><span class="line">/home/codis/gopath</span><br></pre></td></tr></table></figure>
+<h4 id="3-下载-Codis-源代码"><a href="#3-下载-Codis-源代码" class="headerlink" title="3. 下载 Codis 源代码"></a>3. 下载 Codis 源代码</h4><p>Codis 源代码需要下载到 <code>$GOPATH/src/github.com/CodisLabs/codis</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ mkdir -p <span class="variable">$GOPATH</span>/src/github.com/CodisLabs</span><br><span class="line">$ <span class="built_in">cd</span> <span class="variable">$_</span> &amp;&amp; git <span class="built_in">clone</span> https://github.com/CodisLabs/codis.git -b release3.<span class="number">2</span></span><br></pre></td></tr></table></figure>
+<h4 id="4-编译-Codis-源代码"><a href="#4-编译-Codis-源代码" class="headerlink" title="4. 编译 Codis 源代码"></a>4. 编译 Codis 源代码</h4><ul>
+<li>直接通过 make 进行编译，会看到如下输出：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> <span class="variable">$GOPATH</span>/src/github.com/CodisLabs/codis</span><br><span class="line">$ make</span><br></pre></td></tr></table></figure>
+<h2 id="启动及参数"><a href="#启动及参数" class="headerlink" title="启动及参数"></a>启动及参数</h2><h4 id="Codis-Dashboard"><a href="#Codis-Dashboard" class="headerlink" title="Codis Dashboard"></a>Codis Dashboard</h4><h5 id="启动命令："><a href="#启动命令：" class="headerlink" title="启动命令："></a>启动命令：</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ nohup ./bin/codis-dashboard --ncpu=<span class="number">4</span> --config=dashboard.toml \</span><br><span class="line">    --log=dashboard.log --log-level=WARN &amp;</span><br></pre></td></tr></table></figure>
+<p>默认配置文件 <code>dashboard.toml</code> 可由 codis-dashboard 生成。</p>
+<ul>
+<li>启动参数说明：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ ./bin/codis-dashboard -h</span><br><span class="line">Usage:</span><br><span class="line">    codis-dashboard [--ncpu=N] [--config=CONF] [--log=FILE] [--log-level=LEVEL] [--host-admin=ADDR]</span><br><span class="line">    codis-dashboard  --default-config</span><br><span class="line">    codis-dashboard  --version</span><br><span class="line"></span><br><span class="line">Options:</span><br><span class="line">    --ncpu=N                    最大使用 CPU 个数</span><br><span class="line">    -c CONF, --config=CONF      指定启动配置文件</span><br><span class="line">    <span class="operator">-l</span> FILE, --log=FILE         设置 <span class="built_in">log</span> 输出文件</span><br><span class="line">    --log-level=LEVEL           设置 <span class="built_in">log</span> 输出等级：INFO,WARN,DEBUG,ERROR；默认INFO，推荐WARN</span><br></pre></td></tr></table></figure>
+<ul>
+<li>默认配置文件：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$ ./bin/codis-dashboard --default-config | tee dashboard.toml</span><br><span class="line"><span class="comment">##################################################</span></span><br><span class="line"><span class="comment">#                                                #</span></span><br><span class="line"><span class="comment">#                  Codis-Dashboard               #</span></span><br><span class="line"><span class="comment">#                                                #</span></span><br><span class="line"><span class="comment">##################################################</span></span><br><span class="line"></span><br><span class="line">coordinator_name = <span class="string">"zookeeper"</span></span><br><span class="line">coordinator_addr = <span class="string">"10.10.10.8:2181"</span></span><br><span class="line"><span class="comment">#coordinator_auth = ""</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Set Codis Product Name/Auth.</span></span><br><span class="line">product_name = <span class="string">"codis-demo"</span></span><br><span class="line">product_auth = <span class="string">""</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Set bind address for admin(rpc), tcp only.</span></span><br><span class="line">admin_addr = <span class="string">"10.10.10.8:18080"</span></span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">参数</th>
+<th style="text-align:left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">coordinator_name</td>
+<td style="text-align:left">外部存储类型，接受 zookeeper/etcd</td>
+</tr>
+<tr>
+<td style="text-align:left">coordinator_addr</td>
+<td style="text-align:left">外部存储地址</td>
+</tr>
+<tr>
+<td style="text-align:left">product_name</td>
+<td style="text-align:left">集群名称，满足正则 <code>\w[\w\.\-]*</code></td>
+</tr>
+<tr>
+<td style="text-align:left">product_auth</td>
+<td style="text-align:left">集群密码，默认为空</td>
+</tr>
+<tr>
+<td style="text-align:left">admin_addr</td>
+<td style="text-align:left">RESTful API 端口</td>
+</tr>
+</tbody>
+</table>
+<h4 id="Codis-Proxy"><a href="#Codis-Proxy" class="headerlink" title="Codis Proxy"></a>Codis Proxy</h4><h5 id="启动命令：-1"><a href="#启动命令：-1" class="headerlink" title="启动命令："></a>启动命令：</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ nohup ./bin/codis-proxy --ncpu=<span class="number">4</span> --config=proxy.toml \</span><br><span class="line">    --log=proxy.log --log-level=WARN &amp;</span><br></pre></td></tr></table></figure>
+<p>默认配置文件 <code>proxy.toml</code> 可由 codis-proxy 生成。</p>
+<p>codis-proxy 启动后，处于 <code>waiting</code> 状态，监听 <code>proxy_addr</code> 地址，但是不会 <code>accept</code> 连接，添加到集群并完成集群状态的同步，才能改变状态为 <code>online</code>。添加的方法有以下两种：</p>
+<ul>
+<li>通过 codis-fe 添加：通过 <code>Add Proxy</code> 按钮，将 <code>admin_addr</code> 加入到集群中；</li>
+<li>通过 codis-admin 命令行工具添加，方法如下：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ./bin/codis-admin --dashboard=<span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">18080</span> --create-proxy -x <span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">11080</span></span><br></pre></td></tr></table></figure>
+<p>其中 <code>127.0.0.1:18080</code> 以及 <code>127.0.0.1:11080</code> 分别为 dashboard 和 proxy 的 <code>admin_addr</code> 地址；</p>
+<p>添加过程中，dashboard 会完成如下一系列动作：</p>
+<ul>
+<li>获取 proxy 信息，对集群 name 以及 auth 进行验证，并将其信息写入到外部存储中；</li>
+<li>同步 slots 状态；</li>
+<li><p>标记 proxy 状态为 <code>online</code>，此后 proxy 开始 <code>accept</code> 连接并开始提供服务；</p>
+</li>
+<li><p>启动参数说明：</p>
+</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ ./bin/codis-proxy -h</span><br><span class="line">Usage:</span><br><span class="line">	codis-proxy [--ncpu=N] [--config=CONF] [--log=FILE] [--log-level=LEVEL] [--host-admin=ADDR] [--host-proxy=ADDR] [--ulimit=NLIMIT]</span><br><span class="line">	codis-proxy  --default-config</span><br><span class="line">	codis-proxy  --version</span><br><span class="line"></span><br><span class="line">Options:</span><br><span class="line">	--ncpu=N                    最大使用 CPU 个数</span><br><span class="line">	-c CONF, --config=CONF      指定启动配置文件</span><br><span class="line">	<span class="operator">-l</span> FILE, --log=FILE         设置 <span class="built_in">log</span> 输出文件</span><br><span class="line">	--log-level=LEVEL           设置 <span class="built_in">log</span> 输出等级：INFO,WARN,DEBUG,ERROR；默认INFO，推荐WARN</span><br><span class="line">	--ulimit=NLIMIT             检查 <span class="built_in">ulimit</span> -n 的结果，确保运行时最大文件描述不少于 NLIMIT</span><br></pre></td></tr></table></figure>
+<ul>
+<li>默认配置文件：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">$ ./bin/codis-proxy --default-config | tee proxy.toml</span><br><span class="line"><span class="comment">##################################################</span></span><br><span class="line"><span class="comment">#                                                #</span></span><br><span class="line"><span class="comment">#                  Codis-Proxy                   #</span></span><br><span class="line"><span class="comment">#                                                #</span></span><br><span class="line"><span class="comment">##################################################</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Set Codis Product &#123;Name/Auth&#125;.</span></span><br><span class="line">product_name = <span class="string">"codis-demo"</span></span><br><span class="line">product_auth = <span class="string">""</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Set bind address for admin(rpc), tcp only.</span></span><br><span class="line">admin_addr = <span class="string">"10.10.10.8:11080"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Set bind address for proxy, proto_type can be "tcp", "tcp4", "tcp6", "unix" or "unixpacket".</span></span><br><span class="line">proto_<span class="built_in">type</span> = <span class="string">"tcp4"</span></span><br><span class="line">proxy_addr = <span class="string">"10.10.10.8:19000"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Set jodis address &amp; session timeout.</span></span><br><span class="line">jodis_addr = <span class="string">""</span></span><br><span class="line">jodis_timeout = <span class="number">10</span></span><br><span class="line">jodis_compatible = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Proxy will ping-pong backend redis periodly to keep-alive</span></span><br><span class="line">backend_ping_period = <span class="number">5</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># If there is no request from client for a long time, the connection will be droped. Set 0 to disable.</span></span><br><span class="line">session_max_timeout = <span class="number">1800</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Buffer size for each client connection.</span></span><br><span class="line">session_max_bufsize = <span class="number">131072</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Number of buffered requests for each client connection.</span></span><br><span class="line"><span class="comment"># Make sure this is higher than the max number of requests for each pipeline request, or your client may be blocked.</span></span><br><span class="line">session_max_pipeline = <span class="number">1024</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Set period between keep alives. Set 0 to disable.</span></span><br><span class="line">session_keepalive_period = <span class="number">60</span></span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">参数</th>
+<th style="text-align:left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">product_name</td>
+<td style="text-align:left">集群名称，参考 dashboard 参数说明</td>
+</tr>
+<tr>
+<td style="text-align:left">product_auth</td>
+<td style="text-align:left">集群密码，默认为空</td>
+</tr>
+<tr>
+<td style="text-align:left">admin_addr</td>
+<td style="text-align:left">RESTful API 端口</td>
+</tr>
+<tr>
+<td style="text-align:left">proto_type</td>
+<td style="text-align:left">Redis 端口类型，接受 tcp/tcp4/tcp6/unix/unixpacket</td>
+</tr>
+<tr>
+<td style="text-align:left">proxy_addr</td>
+<td style="text-align:left">Redis 端口地址或者路径</td>
+</tr>
+<tr>
+<td style="text-align:left">jodis_addr</td>
+<td style="text-align:left">Jodis 注册 zookeeper 地址</td>
+</tr>
+<tr>
+<td style="text-align:left">jodis_timeout</td>
+<td style="text-align:left">Jodis 注册 session timeout 时间，单位 second</td>
+</tr>
+<tr>
+<td style="text-align:left">jodis_compatible</td>
+<td style="text-align:left"><strong>Jodis 注册 zookeeper 的路径</strong></td>
+</tr>
+<tr>
+<td style="text-align:left">backend_ping_period</td>
+<td style="text-align:left">与 codis-server 探活周期，单位 second，0 表示禁止</td>
+</tr>
+<tr>
+<td style="text-align:left">session_max_timeout</td>
+<td style="text-align:left">与 client 连接最大读超时，单位 second，0 表示禁止</td>
+</tr>
+<tr>
+<td style="text-align:left">session_max_bufsize</td>
+<td style="text-align:left">与 client 连接读写缓冲区大小，单位 byte</td>
+</tr>
+<tr>
+<td style="text-align:left">session_max_pipeline</td>
+<td style="text-align:left">与 client 连接最大的 pipeline 大小</td>
+</tr>
+<tr>
+<td style="text-align:left">session_keepalive_period</td>
+<td style="text-align:left">与 client 的 tcp keepalive 周期，仅 tcp 有效，0 表示禁止</td>
+</tr>
+</tbody>
+</table>
+<h4 id="Codis-Server"><a href="#Codis-Server" class="headerlink" title="Codis Server"></a>Codis Server</h4><ul>
+<li><p>启动 ./bin/codis-server，与启动普通 redis 的方法一致。</p>
+</li>
+<li><p>启动完成后，可以通过 codis-fe 提供的界面或者 codis-admin 命令行工具添加到集群中。</p>
+</li>
+</ul>
+<h4 id="Codis-FE（可选组件）"><a href="#Codis-FE（可选组件）" class="headerlink" title="Codis FE（可选组件）"></a>Codis FE（可选组件）</h4><h5 id="启动命令：-2"><a href="#启动命令：-2" class="headerlink" title="启动命令："></a>启动命令：</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ nohup ./bin/codis-fe --ncpu=<span class="number">4</span> --log=fe.log --log-level=WARN \</span><br><span class="line">    --zookeeper=<span class="number">10.10</span>.<span class="number">10.8</span>:<span class="number">2181</span> --listen=<span class="number">0.0</span>.<span class="number">0.0</span>:<span class="number">8889</span> &amp;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>启动参数说明：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ ./bin/codis-fe -h</span><br><span class="line">Usage:</span><br><span class="line">	codis-fe [--ncpu=N] [--log=FILE] [--log-level=LEVEL] [--assets-dir=PATH] (--dashboard-list=FILE|--zookeeper=ADDR|--etcd=ADDR|--filesystem=ROOT) --listen=ADDR</span><br><span class="line">	codis-fe  --version</span><br><span class="line"></span><br><span class="line">Options:</span><br><span class="line">	--ncpu=N                        最大使用 CPU 个数</span><br><span class="line">	<span class="operator">-d</span> LIST, --dashboard-list=LIST  配置文件，能够自动刷新</span><br><span class="line">	<span class="operator">-l</span> FILE, --log=FILE             设置 <span class="built_in">log</span> 输出文件</span><br><span class="line">	--log-level=LEVEL               设置 <span class="built_in">log</span> 输出等级：INFO,WARN,DEBUG,ERROR；默认INFO，推荐WARN</span><br><span class="line">	--listen=ADDR                   HTTP 服务端口</span><br></pre></td></tr></table></figure>
+<p>配置文件 codis.json 可以手动编辑，也可以通过 codis-admin 从外部存储中拉取，例如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ ./bin/codis-admin --dashboard-list --zookeeper=<span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">2181</span> | tee codis.json</span><br><span class="line">[</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">"name"</span>: <span class="string">"codis-demo"</span>,</span><br><span class="line">        <span class="string">"dashboard"</span>: <span class="string">"127.0.0.1:18080"</span></span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">"name"</span>: <span class="string">"codis-demo2"</span>,</span><br><span class="line">        <span class="string">"dashboard"</span>: <span class="string">"127.0.0.1:28080"</span></span><br><span class="line">    &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<h4 id="Codis-Admin（命令行工具）"><a href="#Codis-Admin（命令行工具）" class="headerlink" title="Codis Admin（命令行工具）"></a>Codis Admin（命令行工具）</h4><p><strong>注意：使用 codis-admin 是十分危险的。</strong></p>
+<h5 id="codis-dashboard-异常退出的修复"><a href="#codis-dashboard-异常退出的修复" class="headerlink" title="codis-dashboard 异常退出的修复"></a>codis-dashboard 异常退出的修复</h5><p>当 codis-dashboard 启动时，会在外部存储上存放一条数据，用于存储 dashboard 信息，同时作为 LOCK 存在。当 codis-dashboard 安全退出时，会主动删除该数据。当 codis-dashboard 异常退出时，由于之前 LOCK 未安全删除，重启往往会失败。因此 codis-admin 提供了强制删除工具：</p>
+<ol>
+<li>确认 codis-dashboard 进程已经退出（<strong>很重要</strong>）；</li>
+<li>运行 codis-admin 删除 LOCK：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ./bin/codis-admin --remove-lock --product=codis-demo --zookeeper=<span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">2181</span></span><br></pre></td></tr></table></figure>
+<h5 id="codis-proxy-异常退出的修复"><a href="#codis-proxy-异常退出的修复" class="headerlink" title="codis-proxy 异常退出的修复"></a>codis-proxy 异常退出的修复</h5><p>通常 codis-proxy 都是通过 codis-dashboard 进行移除，移除过程中 codis-dashboard 为了安全会向 codis-proxy 发送 <code>offline</code> 指令，成功后才会将 proxy 信息从外部存储中移除。如果 codis-proxy 异常退出，该操作会失败。此时可以使用 codis-admin 工具进行移除：</p>
+<ol>
+<li>确认 codis-proxy 进程已经退出（<strong>很重要</strong>）；</li>
+<li>运行 codis-admin 删除 proxy：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ./bin/codis-admin --dashboard=<span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">18080</span> --remove-proxy --addr=<span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">11080</span> --force</span><br></pre></td></tr></table></figure>
+<p>选项 <code>--force</code> 表示，无论 <code>offline</code> 操作是否成功，都从外部存储中将该节点删除。所以操作前，一定要确认该 codis-proxy 进程已经退出。</p>
+<h2 id="Zookeeper"><a href="#Zookeeper" class="headerlink" title="Zookeeper"></a>Zookeeper</h2><p>Zookeeper是一个针对大型应用提供高可用的数据管理、应用程序协调服务的分布式服务框架，基于对Paxos算法的实现，使该框架保证了分布式环境中数据的强一致性，提供的功能包括：配置维护、统一命名服务、状态同步服务、集群管理等。</p>
+<h4 id="ZooKeeper-典型的应用场景–配置管理（Configuration-Management）"><a href="#ZooKeeper-典型的应用场景–配置管理（Configuration-Management）" class="headerlink" title="ZooKeeper 典型的应用场景–配置管理（Configuration Management）"></a>ZooKeeper 典型的应用场景–配置管理（Configuration Management）</h4><blockquote>
+<p>配置的管理在分布式应用环境中很常见，例如同一个应用系统需要多台 PC Server 运行，但是它们运行的应用系统的某些配置项是相同的，如果要修改这些相同的配置项，那么就必须同时修改每台运行这个应用系统的 PC Server，这样非常麻烦而且容易出错。<br>像这样的配置信息完全可以交给 Zookeeper 来管理，将配置信息保存在 Zookeeper 的某个目录节点中，然后将所有需要修改的应用机器监控配置信息的状态，一旦配置信息发生变化，每台应用机器就会收到 Zookeeper 的通知，然后从 Zookeeper 获取新的配置信息应用到系统中。</p>
+</blockquote>
+<p>Codis的特点是动态的扩容缩容，对业务透明；zk除了存储路由信息，同时还作为一个事件同步的媒介服务，比如变更master或者数据迁移这样的事情，需要所有的proxy通过监听特定zk事件来实现 可以说zk被codis当做了一个可靠的rpc的信道来使用。因为只有集群变更的admin时候会往zk上发事件，proxy监听到以后，回复在zk上，admin收到各个proxy的回复后才继续。本身集群变更的事情不会经常发生，所以数据量不大。</p>
+<h2 id="Codis-扩容"><a href="#Codis-扩容" class="headerlink" title="Codis 扩容"></a>Codis 扩容</h2><h3 id="通过fe添加group"><a href="#通过fe添加group" class="headerlink" title="通过fe添加group"></a>通过fe添加group</h3><p>通过web浏览器访问集群管理页面(fe地址:<a href="http://test.max.gg:8889/" target="_blank" rel="external">http://test.max.gg:8889/</a>) 选择我们刚搭建的集群 codis-demo，在 Proxy 栏可看到我们已经启动的 Proxy， 添加 NEW GROUP，NEW GROUP 行输入 x，再点击 NEW GROUP 即可 添加 Codis Server，Add Server 行输入我们刚刚启动的 codis-server 地址，添加到我们刚新建的 Group，然后再点击 Add Server 按钮即可</p>
+<h3 id="通过fe初始化slot"><a href="#通过fe初始化slot" class="headerlink" title="通过fe初始化slot"></a>通过fe初始化slot</h3><p>新增的集群 slot 状态是 offline，因此我们需要对它进行初始化（将 1024 个 slot 分配到各个 group），而初始化最快的方法可通过 fe 提供的 rebalance all slots 按钮来做，新增GROUP时需要同样的操作，即可将数据平均的分配到各个GROUP。</p>
+<h2 id="Codis-容错，负载均衡，一致性"><a href="#Codis-容错，负载均衡，一致性" class="headerlink" title="Codis 容错，负载均衡，一致性"></a>Codis 容错，负载均衡，一致性</h2><p>因为 codis-proxy 是无状态的，可以比较容易的搭多个实例，利用HAProxy或结合keepalived达到高可用性和横向扩展。实现负载均衡。</p>
+<p>对下层的 redis 实例来说，当一个 group 的 master 挂掉的时候，应该让管理员清楚，并手动的操作，因为这涉及到了数据一致性等问题（redis的主从同步是最终一致性的）。因此 codis 不会自动的将某个 slave 升级成 master。</p>
+<p>需要注意，codis 将其中一个 slave 升级为 master 时，该组内其他 slave 实例是不会自动改变状态的，这些 slave 仍将试图从旧的 master 上同步数据，因而会导致组内新的 master 和其他 slave 之间的数据不一致。因此当出现主从切换时，需要管理员手动创建新的 sync action 来完成新 master 与 slave 之间的数据同步。</p>
+<p>可以选择Redis Sentinel实现主从的自动切换。</p>
+]]></content>
+    </entry>
+    
+    <entry>
       <title><![CDATA[Introduce for Implement of ZeroRpc]]></title>
       <url>zyidev.com/2017/04/23/20170423/</url>
       <content type="html"><![CDATA[<h1 id="zerorpc"><a href="#zerorpc" class="headerlink" title="zerorpc"></a>zerorpc</h1><h2 id="Introduction-amp-History"><a href="#Introduction-amp-History" class="headerlink" title="Introduction &amp; History"></a>Introduction &amp; History</h2><p>zerorpc features a dead-simple API for exposing any object or module over the<br>network, and a powerful gevent implementation which supports multiple ZMQ<br>socket types, streaming, heartbeats and more. It also includes a simple<br>command-line tool for interactive querying and introspection.</p>
