@@ -4,6 +4,23 @@
   
     
     <entry>
+      <title><![CDATA[mongodb单实例升级到复制集]]></title>
+      <url>zyidev.cn/2018/12/10/20181210/</url>
+      <content type="html"><![CDATA[<h1 id="mongodb单实例升级到复制集"><a href="#mongodb单实例升级到复制集" class="headerlink" title="mongodb单实例升级到复制集"></a>mongodb单实例升级到复制集</h1><h2 id="1-修改配置文件-config-conf"><a href="#1-修改配置文件-config-conf" class="headerlink" title="1.修改配置文件 config.conf"></a>1.修改配置文件 config.conf</h2><p>原配置文件如：<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dbpath=path/data&#10;logpath=path/mongo.log&#10;logappend=true&#10;auth=false&#10;fork=true&#10;storageEngine=wiredTiger&#10;maxConns=2000&#10;wiredTigerCacheSizeGB=30</span><br></pre></td></tr></table></figure></p>
+<p>修改为：<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dbpath=path/data&#10;logpath=path/mongo.log&#10;logappend=true&#10;auth=false&#10;fork=true&#10;storageEngine=wiredTiger&#10;maxConns=2000&#10;wiredTigerCacheSizeGB=30&#10;replSet=heybox_mongo&#10;oplogSize=50000&#10;``` &#10;&#27880;&#24847;&#10;- 1.&#27492;&#22788; replSet &#20026;&#22797;&#21046;&#38598;&#30340;&#38598;&#32676;&#21517; &#21508;&#33410;&#28857;&#38656;&#35201;&#20445;&#25345;&#19968;&#33268;&#10;- 2.oplogSize &#20026;oplog&#30340;&#22823;&#23567; &#23384;&#20648;mongodb&#30340;&#20462;&#25913;&#26085;&#24535; &#24212;&#26681;&#25454;&#25968;&#25454;&#26356;&#26032;&#30340;&#39057;&#32321;&#31243;&#24230;&#35774;&#32622;&#21512;&#29702;&#30340;&#20540;  &#21542;&#32773;&#20250;&#23548;&#33268;&#20174;&#33410;&#28857;&#26080;&#27861;&#25104;&#21151;&#23436;&#25104;&#25968;&#25454;&#30340;&#21516;&#27493; &#32447;&#19978; 2TB&#24038;&#21491;&#30340;&#25968;&#25454;&#24211; &#35774;&#32622;&#20026;50GB &#22522;&#26412;&#22815;&#29992;&#10;- 3.maxConns &#26681;&#25454;&#23454;&#38469;&#24773;&#20917;&#35843;&#25972; &#10;&#10;## 2.&#20572;&#27490;&#21407;&#23454;&#20363; &#24182;&#37325;&#26032;&#21551;&#21160;&#23454;&#20363;&#10;```shell&#10;mongod --shutdown  --config config.conf &#10;mongod --config config.conf</span><br></pre></td></tr></table></figure></p>
+<h2 id="3-登录该实例，初始化复制集"><a href="#3-登录该实例，初始化复制集" class="headerlink" title="3.登录该实例，初始化复制集"></a>3.登录该实例，初始化复制集</h2><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mongo&#10;cfg = &#123;&#34;_id&#34; : &#34;heybox_mongo&#34;, &#34;members&#34; : [&#123;&#34;_id&#34; : 0,&#34;host&#34; : &#34;10.10.10.6:27017&#34;&#125;]&#125;&#10;rs.initiate(cfg);</span><br></pre></td></tr></table></figure>
+<p>注意</p>
+<ul>
+<li>1.此处的 _id 为mongodb 集群的 replSet 名</li>
+<li>2.members的host 为 当前实例暴露给内网的ip和端口 需要提供给其他实例访问 docker 启动为映射前的地址:端口</li>
+<li>3.不能使用缺省值 会导致其他节点访问不了当前实例</li>
+</ul>
+<h2 id="4-添加其他节点"><a href="#4-添加其他节点" class="headerlink" title="4.添加其他节点"></a>4.添加其他节点</h2><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rs.add(&#34;10.10.10.3:27017&#34;) #&#28155;&#21152;&#20174;&#33410;&#28857;&#10;rs.addArb(&#34;10.10.10.3:27017&#34;) #&#28155;&#21152;&#20210;&#35009;&#33410;&#28857;</span><br></pre></td></tr></table></figure>
+<p>启动过程中总共需要重启节点一次  后续迁移 主从切换 可不停机进行</p>
+]]></content>
+    </entry>
+    
+    <entry>
       <title><![CDATA[分布式 Redis 解决方案Codis介绍]]></title>
       <url>zyidev.cn/2017/11/10/20171110/</url>
       <content type="html"><![CDATA[<h1 id="分布式-Redis-解决方案Codis介绍"><a href="#分布式-Redis-解决方案Codis介绍" class="headerlink" title="分布式 Redis 解决方案Codis介绍"></a>分布式 Redis 解决方案Codis介绍</h1><p>Codis 是一个分布式 Redis 解决方案, 对于上层的应用来说, 连接到 Codis Proxy 和连接原生的 Redis Server 没有显著区别 , 上层应用可以像使用单机的 Redis 一样使用, Codis 底层会处理请求的转发, 不停机的数据迁移等工作, 所有后边的一切事情, 对于前面的客户端来说是透明的, 可以简单的认为后边连接的是一个内存无限大的 Redis 服务。</p>
